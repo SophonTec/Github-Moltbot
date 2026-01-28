@@ -3,6 +3,7 @@ import { decodeIdToUrl } from "@/lib/id";
 import { fetchAndExtractArticle } from "@/lib/article";
 import { getArchivedArticle, updateArchivedContent } from "@/lib/archive";
 import { Reader } from "@/app/components/Reader";
+import { ArticleActions } from "@/app/components/ArticleActions";
 
 export const runtime = "nodejs";
 
@@ -61,6 +62,10 @@ export default async function ArticlePage({
         originalText={article.text}
         originalHtml={article.html}
       />
+
+      <div className="mx-auto w-full max-w-3xl px-4 pb-10 sm:px-6">
+        <ArticleActions url={article.url} originalText={article.text} />
+      </div>
     </div>
   );
 }

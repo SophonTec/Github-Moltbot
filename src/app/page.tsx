@@ -39,6 +39,7 @@ export default async function Home({
             <Tab href="/" active={!category} label="All" />
             <Tab href="/?category=tech" active={category === "tech"} label="Tech" />
             <Tab href="/?category=economy" active={category === "economy"} label="Economy" />
+            <Tab href="/me" active={false} label="My" />
           </nav>
         </div>
       </header>
