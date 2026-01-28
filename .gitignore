@@ -1,3 +1,21 @@
+# Next.js
+node_modules
+.next
+out
+dist
+
+# Env
+.env*
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+
 # Assistant local memory/config (kept outside project repo)
 MEMORY.md
 memory/
