@@ -25,6 +25,7 @@ export function Reader({
 }) {
   const [difficulty, setDifficulty] = useState<Difficulty>("original");
   const [text, setText] = useState<string>(originalText);
+  const [html, setHtml] = useState<string | undefined>(originalHtml);
   const [loading, setLoading] = useState(false);
 
   const currentHint = useMemo(
@@ -37,11 +38,25 @@ export function Reader({
 
     if (next === "original") {
       setText(originalText);
+      setHtml(originalHtml);
       return;
     }
 
     setLoading(true);
     try {
+      // If we have original HTML, rewrite it while keeping structure.
+      if (originalHtml) {
+        const res = await fetch("/api/rewrite-html", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ html: originalHtml, difficulty: next }),
+        });
+        const data = (await res.json()) as { html?: string };
+        setHtml((data.html ?? "").trim());
+        return;
+      }
+
+      // Fallback: rewrite plain text.
       const res = await fetch("/api/rewrite", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -89,9 +104,9 @@ export function Reader({
         </div>
       </header>
 
-      {difficulty === "original" && originalHtml ? (
+      {html ? (
         <article className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950 sm:p-6">
-          <SafeHtml html={originalHtml} />
+          <SafeHtml html={html} />
         </article>
       ) : (
         <article className="space-y-4 text-[15px] leading-7 text-zinc-900 dark:text-zinc-100 sm:text-[16px]">
