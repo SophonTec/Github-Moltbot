@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { SafeHtml } from "@/app/components/SafeHtml";
 import type { Difficulty } from "@/lib/types";
 
 const OPTIONS: Array<{ id: Difficulty; label: string; hint: string }> = [
@@ -12,11 +13,15 @@ const OPTIONS: Array<{ id: Difficulty; label: string; hint: string }> = [
 export function Reader({
   title,
   meta,
+  sourceUrl,
   originalText,
+  originalHtml,
 }: {
   title: string;
   meta?: string;
+  sourceUrl: string;
   originalText: string;
+  originalHtml?: string;
 }) {
   const [difficulty, setDifficulty] = useState<Difficulty>("original");
   const [text, setText] = useState<string>(originalText);
@@ -84,13 +89,30 @@ export function Reader({
         </div>
       </header>
 
-      <article className="space-y-4 text-[15px] leading-7 text-zinc-900 dark:text-zinc-100 sm:text-[16px]">
-        {text.split(/\n{2,}/).map((p, idx) => (
-          <p key={idx} className="whitespace-pre-wrap">
-            {p}
-          </p>
-        ))}
-      </article>
+      {difficulty === "original" && originalHtml ? (
+        <article className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950 sm:p-6">
+          <SafeHtml html={originalHtml} />
+        </article>
+      ) : (
+        <article className="space-y-4 text-[15px] leading-7 text-zinc-900 dark:text-zinc-100 sm:text-[16px]">
+          {text.split(/\n{2,}/).map((p, idx) => (
+            <p key={idx} className="whitespace-pre-wrap">
+              {p}
+            </p>
+          ))}
+        </article>
+      )}
+
+      <div className="mt-6">
+        <a
+          href={sourceUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="text-sm text-zinc-600 underline underline-offset-4 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-50"
+        >
+          Original article link
+        </a>
+      </div>
 
       <div className="mt-10 rounded-xl border border-zinc-200 bg-white p-4 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
         Disclaimer: Articles come from public sources (RSS + on-page extraction). Some sites may block full text; in that case you may see reduced content.

@@ -24,3 +24,68 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Minimal reading typography for injected article HTML */
+.reader-content {
+  font-size: 15px;
+  line-height: 1.75;
+  color: rgb(24 24 27);
+}
+@media (prefers-color-scheme: dark) {
+  .reader-content {
+    color: rgb(244 244 245);
+  }
+}
+.reader-content p {
+  margin: 0.9rem 0;
+}
+.reader-content h1,
+.reader-content h2,
+.reader-content h3 {
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 1.25rem 0 0.5rem;
+}
+.reader-content h2 {
+  font-size: 1.25rem;
+}
+.reader-content h3 {
+  font-size: 1.1rem;
+}
+.reader-content a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.reader-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+}
+.reader-content figure {
+  margin: 1rem 0;
+}
+.reader-content figcaption {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-top: 0.35rem;
+}
+.reader-content ul,
+.reader-content ol {
+  padding-left: 1.25rem;
+  margin: 0.75rem 0;
+}
+.reader-content li {
+  margin: 0.25rem 0;
+}
+.reader-content blockquote {
+  border-left: 3px solid rgb(228 228 231);
+  padding-left: 0.9rem;
+  margin: 0.9rem 0;
+  color: rgb(63 63 70);
+}
+@media (prefers-color-scheme: dark) {
+  .reader-content blockquote {
+    border-left-color: rgb(39 39 42);
+    color: rgb(212 212 216);
+  }
+}

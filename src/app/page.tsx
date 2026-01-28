@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { fetchLatestArticles } from "@/lib/rss";
+import { listArchivedArticles } from "@/lib/archive";
 import { ArticleCard } from "@/app/components/ArticleCard";
 
 export const runtime = "nodejs";
@@ -12,7 +13,9 @@ export default async function Home({
   const sp = await searchParams;
   const category = sp.category === "tech" || sp.category === "economy" ? sp.category : undefined;
 
-  const items = await fetchLatestArticles({ category, limit: 45 });
+  // Prefer archive (stored), fallback to live feeds.
+  const archived = listArchivedArticles({ category, limit: 60 });
+  const items = archived.length > 0 ? archived : await fetchLatestArticles({ category, limit: 45 });
 
   return (
     <div className="min-h-dvh bg-zinc-50 text-zinc-950 dark:bg-black dark:text-zinc-50">

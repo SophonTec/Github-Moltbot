@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { decodeIdToUrl } from "@/lib/id";
 import { fetchAndExtractArticle } from "@/lib/article";
+import { getArchivedArticle, updateArchivedContent } from "@/lib/archive";
 import { Reader } from "@/app/components/Reader";
 
 export const runtime = "nodejs";
@@ -13,7 +14,24 @@ export default async function ArticlePage({
   const { id } = await params;
   const url = decodeIdToUrl(id);
 
-  const article = await fetchAndExtractArticle(url);
+  const cached = getArchivedArticle(url);
+
+  const article = cached?.contentText
+    ? {
+        url: cached.url,
+        title: cached.title,
+        byline: undefined,
+        siteName: cached.sourceName,
+        publishedAt: cached.publishedAt,
+        text: cached.contentText,
+        html: cached.contentHtml,
+      }
+    : await fetchAndExtractArticle(url);
+
+  // Cache extracted content for later browsing.
+  if (!cached?.contentText) {
+    updateArchivedContent(url, { contentText: article.text, contentHtml: article.html });
+  }
 
   const metaParts = [article.siteName, article.byline].filter(Boolean);
   const meta = metaParts.join(" · ");
@@ -36,7 +54,13 @@ export default async function ArticlePage({
         </div>
       </div>
 
-      <Reader title={article.title} meta={meta || undefined} originalText={article.text} />
+      <Reader
+        title={article.title}
+        meta={meta || undefined}
+        sourceUrl={article.url}
+        originalText={article.text}
+        originalHtml={article.html}
+      />
     </div>
   );
 }

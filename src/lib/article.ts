@@ -30,7 +30,30 @@ export async function fetchAndExtractArticle(url: string): Promise<ArticleConten
   const html = await res.text();
   const dom = new JSDOM(html, { url });
 
-  const reader = new Readability(dom.window.document);
+  // Make relative links/images absolute so the reading view works reliably.
+  const doc = dom.window.document;
+  doc.querySelectorAll("a[href]").forEach((a) => {
+    const href = a.getAttribute("href");
+    if (!href) return;
+    try {
+      a.setAttribute("href", new URL(href, url).toString());
+      a.setAttribute("target", "_blank");
+      a.setAttribute("rel", "noreferrer");
+    } catch {
+      // ignore
+    }
+  });
+  doc.querySelectorAll("img[src]").forEach((img) => {
+    const src = img.getAttribute("src");
+    if (!src) return;
+    try {
+      img.setAttribute("src", new URL(src, url).toString());
+    } catch {
+      // ignore
+    }
+  });
+
+  const reader = new Readability(doc);
   const parsed = reader.parse();
 
   if (!parsed) {
